@@ -1,0 +1,37 @@
+{
+    "name": "zyos/install-bundle",
+    "description": "Command execution automation process for Symfony",
+    "type": "symfony-bundle",
+    "version": "0.0.1",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "keywords": [
+        "symfony",
+        "bundle",
+        "command",
+        "process",
+        "automation",
+        "zyos",
+        "install",
+        "zyos-install"
+    ],
+    "require": {
+        "php": ">=8.0",
+        "symfony/console": "*",
+        "symfony/filesystem": "*",
+        "symfony/process": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zyos\\InstallBundle\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Carlos Parra",
+            "email": "neural.framework@gmail.com",
+            "role": "Creator & Developer"
+        }
+    ]
+}
