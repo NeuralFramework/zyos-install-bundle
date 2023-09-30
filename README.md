@@ -9,15 +9,15 @@ Install Bundle provides a series of commands that can be configured to:
 - [x] Run server operating system commands (CLI)
 - [x] Validate path directories and files in a custom way
 
-## Requeriments
-PHP version >= 8.0 & Symfony 6.0
+## Requirements
+PHP version >= 8.0 & Symfony >=5.0
 
 > All these processes use the symfony components: Console, Filesystem and Process
 
 ## Installation
 
 ```sh
-composer require zyos/zyos_install 1.0.x-dev
+composer require zyos/install-bundle
 ```
 
 If you don't use flex (you should), you need to enable the package manually:
