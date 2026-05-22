@@ -1,25 +1,94 @@
+# yaml-language-server: $schema=../../../../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+# =============================================================================
+# SERVICE CONFIGURATION FOR ZYOS INSTALL BUNDLE
+# =============================================================================
+# This file defines the service container configuration for the ZyosInstallBundle.
+# It configures dependency injection, service autowiring, and service registration
+# for all classes within the bundle namespace.
+#
+# Key Features:
+# - Automatic dependency injection via autowiring
+# - Automatic service registration and configuration
+# - Tag-based service collection for validators
+# - Resource-based service discovery
+# =============================================================================
+
 services:
-    # default configuration for services in *this* file
+    # =============================================================================
+    # DEFAULT SERVICE CONFIGURATION
+    # =============================================================================
+    # These settings apply to all services defined in this file unless explicitly
+    # overridden at the service level. They provide sensible defaults to reduce
+    # boilerplate configuration.
+    #
+    # Configuration Details:
+    # - autowire: Enables automatic constructor dependency injection based on type hints
+    # - autoconfigure: Automatically registers services as commands, event subscribers, etc.
+    # - public: Services are private by default (recommended for better encapsulation)
+    # =============================================================================
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        public: false
+        autowire: true      # Automatically injects dependencies in your services based on type hints in constructors
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc. based on implemented interfaces
+        public: false       # Services are private by default, accessible only through dependency injection
 
-    # Add tag for interface
+    # =============================================================================
+    # INTERFACE-BASED TAGGING CONFIGURATION
+    # =============================================================================
+    # This section configures automatic tagging for all classes that implement
+    # the ValidatorsInterface. Each implementing class will automatically receive
+    # the 'zyos_install.validators' tag, allowing them to be collected and
+    # injected as a collection.
+    #
+    # Purpose:
+    # - Enables automatic discovery of all validator implementations
+    # - Allows ValidatorsHandler to receive all validators via tagged iterator
+    # - Eliminates manual tagging of each validator class
+    # =============================================================================
     _instanceof:
-        Zyos\InstallBundle\ValidatorsInterface:
-            lazy: true
-            public: true
-            tags: [ 'zyos_install.validators' ]
+        Zyos\InstallBundle\ValidatorInterface:
+            tags: ['zyos_install.validators']
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    # =============================================================================
+    # RESOURCE-BASED SERVICE DISCOVERY
+    # =============================================================================
+    # This configuration automatically registers all classes in the bundle's src/
+    # directory as services. Each class becomes a service with an ID equal to its
+    # fully-qualified class name (FQCN).
+    #
+    # Resource Pattern:
+    # - Scans all files in '../../../src/*' (relative to this config file)
+    # - Creates one service per class found
+    # - Service ID = Fully qualified class name (e.g., Zyos\InstallBundle\Service\MyService)
+    #
+    # Exclusions:
+    # - DependencyInjection: Internal DI configuration classes
+    # - Entity: Doctrine entities (not services)
+    # - Migrations: Doctrine migration classes (not services)
+    # - Tests: Test classes (not services)
+    # - Kernel.php: Bundle kernel class (not a service)
+    # =============================================================================
     Zyos\InstallBundle\:
         resource: '../../../src/*'
         exclude: '../../../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
-        public: false
 
-    # Handlers for validations
+    # =============================================================================
+    # VALIDATORS HANDLER SERVICE CONFIGURATION
+    # =============================================================================
+    # The ValidatorsHandler is responsible for coordinating and executing all
+    # validator implementations. It receives all services tagged with
+    # 'zyos_install.validators' via dependency injection.
+    #
+    # Configuration:
+    # - Uses tagged iterator to collect all validator services
+    # - Calls setIterable() method with the collection of validators
+    # - Uses 'getName' method as the default index method for validator identification
+    #
+    # Usage:
+    # The handler can iterate over all validators and execute them in sequence,
+    # typically used for installation validation checks.
+    # =============================================================================
     Zyos\InstallBundle\ValidatorsHandler:
         calls:
-            - setIterable: [!tagged { tag: 'zyos_install.validators', default_index_method: 'getName' }]
+            # Injects all services tagged with 'zyos_install.validators' as an iterable collection
+            # The 'getName' method is used to index validators by their name for easy access
+            - setIterable: [!tagged_iterator { tag: 'zyos_install.validators', default_index_method: 'getName' }]
