@@ -2,7 +2,7 @@
     "name": "zyos/install-bundle",
     "description": "Command execution automation process for Symfony",
     "type": "symfony-bundle",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "keywords": [
